@@ -1,23 +1,22 @@
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from pydantic import BaseModel
-from k8s_utils import create_user_pod_and_service
 from kubernetes import client, config
 import requests
-from openai import AzureOpenAI
 import os
-from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
-from fastapi import HTTPException
-import re
+from openai import AzureOpenAI
+
+from k8s_utils import create_user_pod_and_service
 
 app = FastAPI()
 
+# OpenAI Client Configuration
 openai_client = AzureOpenAI(
     api_key=os.getenv("AZURE_OPENAI_API_KEY"),
     api_version=os.getenv("AZURE_OPENAI_API_VERSION", "2024-12-01-preview"),
     azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
 )
 
+# Request Models
 class UserRequest(BaseModel):
     user_id: str
 
@@ -94,7 +93,7 @@ def execute(req: PythonRequest):
     if not ip:
         raise HTTPException(status_code=404, detail="Pod not found")
 
-    res = requests.post(f"http://{ip}:5000/execute", json={"code": req.code})
+    res = requests.post(f"http://{ip}:5000/python", json={"code": req.code})
     return res.json()
 
 @app.post("/shell")
