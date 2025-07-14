@@ -76,7 +76,6 @@ def get_sql_connection():
 
 @app.post("/sql")
 def run_sql(req: SQLRequest):
-    return {"message": "接口成功接收到请求", "sql": req.sql}
     try:
         conn = get_sql_connection()
         cursor = conn.cursor()
