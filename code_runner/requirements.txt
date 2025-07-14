@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+python-multipart
+pandas 
+requests
+openai
+pyodbc
+azure-identity

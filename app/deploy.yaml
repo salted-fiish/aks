@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aks-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aks-api
+  template:
+    metadata:
+      labels:
+        app: aks-api
+    spec:
+      serviceAccountName: pod-manager
+      containers:
+        - name: api
+          image: container7.azurecr.io/aks-api:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          env:
+            - name: AZURE_OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: openai-secret
+                  key: AZURE_OPENAI_API_KEY
+            - name: AZURE_OPENAI_ENDPOINT
+              value: "https://openaichatgpt-xchina.openai.azure.com/"
+            - name: AZURE_OPENAI_DEPLOYMENT_NAME
+              value: "gpt-4o"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aks-api-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: aks-api
+  ports:
+    - port: 80
+      targetPort: 8000

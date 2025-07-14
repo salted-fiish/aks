@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+kubernetes
+requests
+openai>=1.0.0
+python-multipart

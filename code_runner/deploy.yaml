@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: code-runner
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: code-runner
+  template:
+    metadata:
+      labels:
+        app: code-runner
+    spec:
+      containers:
+        - name: code-runner
+          image: container7.azurecr.io/code-runner:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+          volumeMounts:
+            - name: data-volume
+              mountPath: /data
+      volumes:
+        - name: data-volume
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: code-runner-service
+spec:
+  type: ClusterIP
+  selector:
+    app: code-runner
+  ports:
+    - port: 5000
+      targetPort: 5000 
